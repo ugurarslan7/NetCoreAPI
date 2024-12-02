@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Products
+namespace Services.Categories.Create
 {
-    public record ProductDto(int Id, string Name, decimal Price, int Stock,int CategoryId);
+    public record CreateCategoryRequest(string Name)
+    {
+    }
 }

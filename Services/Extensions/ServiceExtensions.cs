@@ -13,6 +13,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using System.Reflection;
 using Services.ExceptionHandlers;
+using Services.Categories;
 
 namespace Services.Extensions
 {
@@ -22,6 +23,7 @@ namespace Services.Extensions
         {
 
             serviceDescriptors.AddScoped<IProductService, ProductService>();
+            serviceDescriptors.AddScoped<ICategoryService, CategoryService>();
 
             serviceDescriptors.AddFluentValidationAutoValidation();
 

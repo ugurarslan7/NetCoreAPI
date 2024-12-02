@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Products.Create
+namespace Services.Products.Update
 {
-    public class UpdateProductRequestValidator : AbstractValidator<CreateProductRequest>
+    public class UpdateProductRequestValidator : AbstractValidator<UpdateProductRequest>
     {
         public UpdateProductRequestValidator()
         {
@@ -18,9 +18,8 @@ namespace Services.Products.Create
             RuleFor(p => p.Price)
                 .GreaterThan(0).WithMessage("Fiyat 0 dan büyük olmalıdır.");
 
-
             RuleFor(p => p.CategoryId)
-                .GreaterThan(0).WithMessage("Kategori 0 dan büyük olmalıdır.");
+             .GreaterThan(0).WithMessage("Kategori 0 dan büyük olmalıdır.");
 
             RuleFor(p => p.Price)
                .InclusiveBetween(1, 100).WithMessage("Stok miktarı 1 ile 100 arasında olmalıdır.");

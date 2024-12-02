@@ -8,14 +8,14 @@ using System.Net;
 
 namespace Services.Products
 {
-    public class ProductService(IProductRepository repository, IUnitOfWork unitOfWork,IMapper mapper) : IProductService
+    public class ProductService(IProductRepository repository, IUnitOfWork unitOfWork, IMapper mapper) : IProductService
     {
 
         public async Task<ServiceResult<List<ProductDto>>> GetAllListAsync()
         {
             var products = await repository.GetAll().ToListAsync();
 
-            var productAsDto =mapper.Map<List<ProductDto>>(products);
+            var productAsDto = mapper.Map<List<ProductDto>>(products);
 
             return ServiceResult<List<ProductDto>>.Success(productAsDto);
         }
@@ -58,16 +58,11 @@ namespace Services.Products
             var anyProduct = await repository.Where(p => p.Name == request.Name).AnyAsync();
             if (anyProduct)
             {
-                return ServiceResult<CreateProductResponse>.Fail("ürün ismi veritabanında bulunmaktadır.", HttpStatusCode.BadRequest);
+                return ServiceResult<CreateProductResponse>.Fail("ürün ismi veritabanında bulunmaktadır.", HttpStatusCode.NotFound);
             }
 
 
-            var product = new Product()
-            {
-                Name = request.Name,
-                Price = request.Price,
-                Stock = request.Stock
-            };
+            var product =mapper.Map<Product>(request);
 
             await repository.AddAsync(product);
 
@@ -88,9 +83,13 @@ namespace Services.Products
 
             }
 
-            product.Name = request.Name;
-            product.Price = request.Price;
-            product.Stock = request.Stock;
+            var isProductNameExist = await repository.Where(p => p.Name == request.Name && p.Id != product.Id).AnyAsync();
+            if (isProductNameExist)
+            {
+                return ServiceResult.Fail("ürün ismi veritabanında bulunmaktadır.", HttpStatusCode.BadRequest);
+            }
+
+            product = mapper.Map(request, product);
 
             repository.Update(product);
 
