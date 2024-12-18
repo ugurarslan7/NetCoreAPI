@@ -3,7 +3,7 @@ using Repositories.DBContext;
 
 namespace Repositories.Categories
 {
-    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
+    public class CategoryRepository : GenericRepository<Category,int>, ICategoryRepository
     {
 
 

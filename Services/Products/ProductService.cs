@@ -75,21 +75,15 @@ namespace Services.Products
         {
             //fast fail
             //guard clauses 
-            var product = await repository.GetByIdAsync(id);
 
-            if (product is null)
-            {
-                return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
-
-            }
-
-            var isProductNameExist = await repository.Where(p => p.Name == request.Name && p.Id != product.Id).AnyAsync();
+            var isProductNameExist = await repository.Where(p => p.Name == request.Name && p.Id != id).AnyAsync();
             if (isProductNameExist)
             {
                 return ServiceResult.Fail("ürün ismi veritabanında bulunmaktadır.", HttpStatusCode.BadRequest);
             }
 
-            product = mapper.Map(request, product);
+            var product = mapper.Map<Product>(request);
+            product.Id = id;
 
             repository.Update(product);
 
@@ -121,12 +115,7 @@ namespace Services.Products
         {
             var product = await repository.GetByIdAsync(id);
 
-            if (product is null)
-            {
-                return ServiceResult.Fail("Product not found", HttpStatusCode.NotFound);
-            }
-
-            repository.Delete(product);
+            repository.Delete(product!);
 
             await unitOfWork.SaveChangesAsyns();
 

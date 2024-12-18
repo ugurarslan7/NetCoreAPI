@@ -12,11 +12,6 @@ builder.Services.AddControllers(options =>
 
 });
 
-//standart olan entity filtresini kapattýk
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.SuppressModelStateInvalidFilter = true;
-});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

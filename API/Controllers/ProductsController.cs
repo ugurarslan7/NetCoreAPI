@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Repositories.Products;
+using Services.Filters;
 using Services.Products;
 using Services.Products.Create;
 using Services.Products.Update;
@@ -32,6 +34,7 @@ namespace API.Controllers
             return CreateActionResult(await productService.CreateAsync(createProductRequest));
         }
 
+        [ServiceFilter(typeof(NotFoundFilter<Product, int>))]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, UpdateProductRequest updateProductRequest) =>
             CreateActionResult(await productService.UpdateAsync(id, updateProductRequest));
@@ -40,6 +43,7 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateStock(int id, int quantity) =>
             CreateActionResult(await productService.UpdateStockAsync(id,quantity));
 
+        [ServiceFilter(typeof(NotFoundFilter<Product,int>))]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id) =>
             CreateActionResult(await productService.DeleteAsync(id));

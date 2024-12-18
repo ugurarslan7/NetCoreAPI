@@ -1,19 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Repositories.DBContext;
-using Repositories.Products;
-using Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Services.Products;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-using FluentValidation;
-using System.Reflection;
-using Services.ExceptionHandlers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Services.Categories;
+using Services.ExceptionHandlers;
+using Services.Filters;
+using Services.Products;
+using System.Reflection;
 
 namespace Services.Extensions
 {
@@ -22,8 +16,16 @@ namespace Services.Extensions
         public static IServiceCollection AddServices(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
 
+            //standart olan entity filtresini kapattık
+            serviceDescriptors.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
             serviceDescriptors.AddScoped<IProductService, ProductService>();
             serviceDescriptors.AddScoped<ICategoryService, CategoryService>();
+           
+            serviceDescriptors.AddScoped(typeof(NotFoundFilter<,>));
 
             serviceDescriptors.AddFluentValidationAutoValidation();
 
