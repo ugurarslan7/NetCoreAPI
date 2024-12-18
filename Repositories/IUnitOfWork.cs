@@ -8,6 +8,6 @@ namespace Repositories
 {
     public interface IUnitOfWork
     {
-        Task<int> SaveChangesAsyns();
+        Task<int> SaveChangesAsync();
     }
 }

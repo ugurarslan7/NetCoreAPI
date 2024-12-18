@@ -10,34 +10,38 @@ namespace Repositories.Intereceptors
 {
     public class AuditDbContextInterceptor : SaveChangesInterceptor
     {
-        private static Dictionary<EntityState, Action<DbContext, IBaseAuditEntity>> _behavior = new()
+        private static readonly Dictionary<EntityState, Action<DbContext, IAuditEntity>> Behaviors = new()
         {
-            {EntityState.Added,AddBehavior},
-            {EntityState.Added,ModifiedBehavior}
+            { EntityState.Added, AddBehavior },
+            { EntityState.Modified, ModifiedBehavior }
         };
 
-        private static void AddBehavior(DbContext context, IBaseAuditEntity entity)
+
+        private static void AddBehavior(DbContext context, IAuditEntity auditEntity)
         {
-            entity.Created = DateTime.Now;
-            context.Entry(entity).Property(p => p.Updated).IsModified = false;
+            auditEntity.Created = DateTime.Now;
+            context.Entry(auditEntity).Property(x => x.Updated).IsModified = false;
         }
 
-        private static void ModifiedBehavior(DbContext context, IBaseAuditEntity entity)
+        private static void ModifiedBehavior(DbContext context, IAuditEntity auditEntity)
         {
-            entity.Updated = DateTime.Now;
-            context.Entry(entity).Property(p => p.Created).IsModified = false;
+            context.Entry(auditEntity).Property(x => x.Created).IsModified = false;
+            auditEntity.Updated = DateTime.Now;
         }
 
-        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = new CancellationToken())
         {
-            foreach (var item in eventData.Context.ChangeTracker.Entries().ToList())
+            foreach (var entityEntry in eventData.Context!.ChangeTracker.Entries().ToList())
             {
-                if (item.Entity is not IBaseAuditEntity _baseAuditEntity) continue;
+                if (entityEntry.Entity is not IAuditEntity auditEntity) continue;
 
-                if (item.State is not EntityState.Added or EntityState.Modified) continue;
 
-                _behavior[item.State](eventData.Context, _baseAuditEntity);
+                if (entityEntry.State is not (EntityState.Added or EntityState.Modified)) continue;
 
+
+                Behaviors[entityEntry.State](eventData.Context, auditEntity);
             }
 
             return base.SavingChangesAsync(eventData, result, cancellationToken);

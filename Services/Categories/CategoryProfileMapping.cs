@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Repositories.Categories;
 using Services.Categories.Dto;
+using Services.Categories.Create;
 
 namespace Services.Categories
 {
@@ -17,14 +18,15 @@ namespace Services.Categories
     {
         public CategoryProfileMapping()
         {
+            CreateMap<CategoryDto, Category>().ReverseMap();
+
             CreateMap<Category, CategoryWithProductsDto>().ReverseMap();
-            CreateMap<Category, CategoryDto>().ReverseMap();
 
-            CreateMap<CreateProductRequest, Category>().ForMember(dest => dest.Name,
-                opt => opt.MapFrom(p => p.Name.ToLowerInvariant()));
+            CreateMap<CreateCategoryRequest, Category>().ForMember(dest => dest.Name,
+                opt => opt.MapFrom(src => src.Name.ToLowerInvariant()));
 
-            CreateMap<UpdateProductRequest, Category>().ForMember(dest => dest.Name,
-              opt => opt.MapFrom(p => p.Name.ToLowerInvariant()));
+            CreateMap<UpdateCategoryRequest, Category>().ForMember(dest => dest.Name,
+                opt => opt.MapFrom(src => src.Name.ToLowerInvariant()));
         }
     }
 }

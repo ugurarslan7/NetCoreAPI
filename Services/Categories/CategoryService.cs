@@ -14,7 +14,7 @@ namespace Services.Categories
 
         public async Task<ServiceResult<CategoryWithProductsDto>> GetCategoryWithProductsAsync(int categoryId)
         {
-            var category = categoryRepository.GetCategoriyWithProductAsync(categoryId);
+            var category =await categoryRepository.GetCategoriyWithProductAsync(categoryId);
             if (category is null)
             {
                 return ServiceResult<CategoryWithProductsDto>.Fail("Category not found", HttpStatusCode.NotFound);
@@ -27,7 +27,7 @@ namespace Services.Categories
 
         public async Task<ServiceResult<List<CategoryWithProductsDto>>> GetCategoryWithProductsAsync()
         {
-            var category = categoryRepository.GetCategoriyWithProduct().ToListAsync();
+            var category =await categoryRepository.GetCategoriyWithProduct().ToListAsync();
 
             var categoryAsDto = mapper.Map<List<CategoryWithProductsDto>>(category);
 
@@ -57,18 +57,24 @@ namespace Services.Categories
             return ServiceResult<CategoryDto>.Success(categoryAsDto);
         }
 
+
         public async Task<ServiceResult<int>> CreateAsync(CreateCategoryRequest request)
         {
-            var anyCategory = await categoryRepository.Where(p => p.Name == request.Name).AnyAsync();
+            var anyCategory = await categoryRepository.Where(x => x.Name == request.Name).AnyAsync();
+
             if (anyCategory)
             {
-                return ServiceResult<int>.Fail("category ismi veritabanında bulunmaktadır.", HttpStatusCode.NotFound);
+                return ServiceResult<int>.Fail("categori ismi veritabanında bulunmaktadır.",
+                    HttpStatusCode.NotFound);
             }
 
+
             var newCategory = mapper.Map<Category>(request);
+
             await categoryRepository.AddAsync(newCategory);
-            await unitOfWork.SaveChangesAsyns();
-            return ServiceResult<int>.SuccessAsCreated(newCategory.Id,$"api/categories/{newCategory.Id}");
+            await unitOfWork.SaveChangesAsync();
+
+            return ServiceResult<int>.SuccessAsCreated(newCategory.Id, $"api/categories/{newCategory.Id}");
         }
 
         public async Task<ServiceResult> UpdateAsync(int id, UpdateCategoryRequest request)
@@ -84,7 +90,7 @@ namespace Services.Categories
 
             categoryRepository.Update(category);
 
-            await unitOfWork.SaveChangesAsyns();
+            await unitOfWork.SaveChangesAsync();
 
             return ServiceResult.Success(HttpStatusCode.NoContent);
         }
@@ -95,7 +101,7 @@ namespace Services.Categories
 
             categoryRepository.Delete(category);
 
-            await unitOfWork.SaveChangesAsyns();
+            await unitOfWork.SaveChangesAsync();
 
             return ServiceResult.Success(HttpStatusCode.NoContent);
         }

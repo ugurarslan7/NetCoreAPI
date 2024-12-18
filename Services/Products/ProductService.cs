@@ -66,7 +66,7 @@ namespace Services.Products
 
             await repository.AddAsync(product);
 
-            await unitOfWork.SaveChangesAsyns();
+            await unitOfWork.SaveChangesAsync();
 
             return ServiceResult<CreateProductResponse>.SuccessAsCreated(new CreateProductResponse(product.Id), $"api/products/{product.Id}");
         }
@@ -87,7 +87,7 @@ namespace Services.Products
 
             repository.Update(product);
 
-            await unitOfWork.SaveChangesAsyns();
+            await unitOfWork.SaveChangesAsync();
 
             return ServiceResult.Success(HttpStatusCode.NoContent);
         }
@@ -106,7 +106,7 @@ namespace Services.Products
 
             repository.Update(product);
 
-            await unitOfWork.SaveChangesAsyns();
+            await unitOfWork.SaveChangesAsync();
 
             return ServiceResult.Success(HttpStatusCode.NoContent);
         }
@@ -117,7 +117,7 @@ namespace Services.Products
 
             repository.Delete(product!);
 
-            await unitOfWork.SaveChangesAsyns();
+            await unitOfWork.SaveChangesAsync();
 
             return ServiceResult.Success(HttpStatusCode.NoContent);
         }

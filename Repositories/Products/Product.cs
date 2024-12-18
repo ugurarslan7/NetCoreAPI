@@ -2,7 +2,7 @@
 
 namespace Repositories.Products
 {
-    public class Product :BaseEntity<int> ,IBaseAuditEntity
+    public class Product :BaseEntity<int> , IAuditEntity
     {
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }

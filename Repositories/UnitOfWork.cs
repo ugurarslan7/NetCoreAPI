@@ -15,7 +15,7 @@ namespace Repositories
             _appDbContext = appDbContext;
         }
 
-        public Task<int> SaveChangesAsyns()
+        public Task<int> SaveChangesAsync()
         {
             return _appDbContext.SaveChangesAsync();
         }
